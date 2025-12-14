@@ -10,7 +10,6 @@ import {
     getProgressMessage,
     DigResult
 } from '@/lib/gameConfig';
-import MineShaft from './MineShaft';
 import MemeDigger from './MemeDigger';
 import Confetti from './Confetti';
 
@@ -56,7 +55,11 @@ export default function DiggingGame() {
 
     // Submit score to Supabase
     const submitScore = useCallback(async (finalScore: number, finalDigs: number, outcome: 'bust' | 'jackpot') => {
-        if (!user) return;
+        // Allow guest submissions too
+        const playerId = user?.id || 'anonymous_' + Date.now();
+        const displayName = user?.displayName || 'Anonymous';
+
+        console.log('Submitting score:', { playerId, displayName, finalScore, finalDigs, outcome });
 
         // Spam prevention
         const now = Date.now();
@@ -67,16 +70,18 @@ export default function DiggingGame() {
         setLastSubmitTime(now);
 
         try {
-            const { error } = await supabase.from('scores').insert({
-                player_id: user.id,
-                display_name: user.displayName,
+            const { data, error } = await supabase.from('scores').insert({
+                player_id: playerId,
+                display_name: displayName,
                 score: finalScore,
                 digs: finalDigs,
                 outcome,
-            });
+            }).select();
 
             if (error) {
-                console.error('Failed to submit score:', error);
+                console.error('Failed to submit score:', error.message, error.details, error.hint);
+            } else {
+                console.log('Score submitted successfully:', data);
             }
         } catch (err) {
             console.error('Score submission error:', err);
@@ -84,20 +89,19 @@ export default function DiggingGame() {
     }, [user, lastSubmitTime]);
 
     // Handle dig action
-    const dig = useCallback(() => {
+    const handleDig = useCallback(() => {
         if (!game.isPlaying || game.isDigging) return;
 
-        // Start dig animation
         setGame(prev => ({ ...prev, isDigging: true }));
 
-        // Delay result calculation for animation
+        // Simulate mining delay
         setTimeout(() => {
             setGame(prev => {
+                const { result, points } = calculateDigResult(prev.digs);
                 const newDigs = prev.digs + 1;
-                const { result, points } = calculateDigResult(newDigs);
 
                 if (result === 'bust') {
-                    // Game over - bust
+                    // Game over - submit score on bust too
                     const finalScore = prev.score;
                     submitScore(finalScore, newDigs, 'bust');
 
@@ -171,125 +175,112 @@ export default function DiggingGame() {
     };
 
     return (
-        <div className="min-h-screen bg-tunnel-bg text-white p-4">
+        <div className="min-h-screen bg-gradient-to-b from-[#1a0f08] to-[#0d0604] text-white">
             <Confetti trigger={showJackpot} type="jackpot" />
 
-            {/* Header stats */}
-            <div className="max-w-md mx-auto mb-6">
-                <div className="grid grid-cols-3 gap-4 text-center mb-4">
-                    <div className="bg-tunnel-wall rounded-lg p-3">
-                        <div className="text-2xl font-bold text-amber-400">{game.score}</div>
-                        <div className="text-xs text-gray-400">Score</div>
+            {/* Clean Header */}
+            <header className="py-4 border-b border-amber-900/30">
+                <div className="max-w-4xl mx-auto px-4 flex items-center justify-between">
+                    <h1 className="text-2xl font-bold text-amber-400">⛏️ Dig & Bust</h1>
+                    <div className="text-sm text-gray-400">
+                        Playing as <span className="text-amber-300">{user?.displayName || 'Guest'}</span>
                     </div>
-                    <div className="bg-tunnel-wall rounded-lg p-3">
-                        <div className="text-2xl font-bold text-diamond">{game.digs}</div>
-                        <div className="text-xs text-gray-400">Digs</div>
+                </div>
+            </header>
+
+            <main className="max-w-4xl mx-auto px-4 py-6">
+                {/* Stats Bar */}
+                <div className="flex justify-center gap-6 mb-6">
+                    <div className="text-center">
+                        <div className="text-3xl font-bold text-amber-400">{game.score}</div>
+                        <div className="text-xs text-gray-500 uppercase tracking-wide">Score</div>
                     </div>
-                    <div className="bg-tunnel-wall rounded-lg p-3">
-                        <div className="text-2xl font-bold text-green-400">{bestScore}</div>
-                        <div className="text-xs text-gray-400">Best</div>
+                    <div className="h-12 w-px bg-amber-900/30" />
+                    <div className="text-center">
+                        <div className="text-3xl font-bold text-cyan-400">{game.digs}</div>
+                        <div className="text-xs text-gray-500 uppercase tracking-wide">Digs</div>
+                    </div>
+                    <div className="h-12 w-px bg-amber-900/30" />
+                    <div className="text-center">
+                        <div className="text-3xl font-bold text-green-400">{bestScore}</div>
+                        <div className="text-xs text-gray-500 uppercase tracking-wide">Best</div>
                     </div>
                 </div>
 
-                {/* Attempts */}
-                <div className="text-center text-sm text-gray-400">
-                    Attempt #{attempts + 1} | Playing as <span className="text-amber-400">{user?.displayName || 'Guest'}</span>
-                </div>
-            </div>
-
-            {/* Progress message */}
-            <div className="text-center mb-6">
-                <div className={`text-xl font-bold transition-colors ${progress >= 75 ? 'text-diamond animate-pulse' :
-                    progress >= 50 ? 'text-amber-400' :
-                        'text-white'
-                    }`}>
-                    {message}
-                </div>
-                {game.lastResult === 'gem' && game.lastPoints > 0 && (
-                    <div className="text-green-400 text-lg animate-bounce">
-                        +{game.lastPoints} 💎
-                    </div>
-                )}
-            </div>
-
-            {/* Actual Meme Image with Animation */}
-            <MemeDigger
-                isDigging={game.isDigging}
-                progress={progress}
-                showBust={game.outcome === 'bust'}
-            />
-
-            {/* Game controls */}
-            <div className="max-w-md mx-auto mt-6">
-                {game.isPlaying ? (
-                    <button
-                        onClick={dig}
-                        disabled={game.isDigging}
-                        className={`
-              w-full py-6 text-2xl font-bold rounded-xl
-              transition-all transform
-              ${game.isDigging
-                                ? 'bg-dirt-dark text-gray-400 cursor-not-allowed'
-                                : 'bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl'
-                            }
-            `}
-                    >
-                        {game.isDigging ? '⛏️ Digging...' : '⛏️ DIG!'}
-                    </button>
-                ) : (
-                    <div className="space-y-4">
-                        {/* Result display */}
-                        <div className={`text-center p-6 rounded-xl ${game.outcome === 'jackpot'
-                            ? 'bg-gradient-to-r from-diamond-dark to-diamond text-white'
-                            : 'bg-gradient-to-r from-red-800 to-red-900'
+                {/* Progress message */}
+                {game.isPlaying && (
+                    <div className="text-center mb-4">
+                        <div className={`text-lg font-semibold ${progress >= 75 ? 'text-cyan-400 animate-pulse' :
+                                progress >= 50 ? 'text-amber-400' : 'text-gray-300'
                             }`}>
-                            {game.outcome === 'jackpot' ? (
-                                <>
-                                    <div className="text-4xl mb-2">🏆💎🏆</div>
-                                    <div className="text-2xl font-bold">JACKPOT!</div>
-                                    <div className="text-lg">You hit the Diamond Wall!</div>
-                                    <div className="text-3xl font-bold mt-2">{game.score} points</div>
-                                </>
-                            ) : (
-                                <>
-                                    <div className="text-4xl mb-2">💥</div>
-                                    <div className="text-2xl font-bold">BUST!</div>
-                                    <div className="text-lg opacity-80">You were THIS close...</div>
-                                    <div className="text-xl mt-2">Final Score: {game.score}</div>
-                                    <div className="text-sm opacity-60">{game.digs} digs deep</div>
-                                </>
-                            )}
+                            {message}
                         </div>
-
-                        {/* Play again button */}
-                        <button
-                            onClick={resetGame}
-                            className="w-full py-4 text-xl font-bold rounded-xl bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 transition-all transform hover:scale-105"
-                        >
-                            🔄 Dig Again!
-                        </button>
+                        {game.lastResult === 'gem' && game.lastPoints > 0 && (
+                            <div className="text-green-400 text-xl font-bold animate-bounce mt-1">
+                                +{game.lastPoints} 💎
+                            </div>
+                        )}
                     </div>
                 )}
-            </div>
 
-            {/* Tips */}
-            {game.isPlaying && game.digs === 0 && (
-                <div className="max-w-md mx-auto mt-8 text-center text-sm text-gray-400">
-                    <p>💡 Keep digging to reach the Diamond Wall!</p>
-                    <p>But be careful... dig too deep and you might bust!</p>
-                </div>
-            )}
+                {/* Meme Display */}
+                <MemeDigger
+                    isDigging={game.isDigging}
+                    progress={progress}
+                    showBust={game.outcome === 'bust'}
+                />
 
-            {/* Near jackpot warning */}
-            {game.isPlaying && progress >= 50 && (
-                <div className="max-w-md mx-auto mt-4 text-center">
-                    <div className="bg-diamond/20 border border-diamond/40 rounded-lg p-3">
-                        <span className="text-diamond font-semibold">
-                            ⚡ Near the Diamond Wall! Jackpot chance active!
-                        </span>
-                    </div>
+                {/* Game Controls */}
+                <div className="max-w-md mx-auto mt-6">
+                    {game.isPlaying ? (
+                        <button
+                            onClick={handleDig}
+                            disabled={game.isDigging}
+                            className={`w-full py-4 text-xl font-bold rounded-xl transition-all transform ${game.isDigging
+                                    ? 'bg-gray-700 cursor-not-allowed scale-95'
+                                    : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 hover:scale-105 active:scale-95 shadow-lg hover:shadow-amber-500/25'
+                                }`}
+                        >
+                            {game.isDigging ? '⛏️ Digging...' : '⛏️ DIG'}
+                        </button>
+                    ) : (
+                        <div className="space-y-4">
+                            {/* Result display */}
+                            <div className={`text-center p-6 rounded-xl ${game.outcome === 'jackpot'
+                                    ? 'bg-gradient-to-r from-cyan-900/50 to-blue-900/50 border border-cyan-500/30'
+                                    : 'bg-gradient-to-r from-red-900/50 to-orange-900/50 border border-red-500/30'
+                                }`}>
+                                <div className="text-4xl mb-2">
+                                    {game.outcome === 'jackpot' ? '🎉💎🎉' : '💥'}
+                                </div>
+                                <div className={`text-2xl font-bold ${game.outcome === 'jackpot' ? 'text-cyan-400' : 'text-red-400'
+                                    }`}>
+                                    {game.outcome === 'jackpot' ? 'JACKPOT!' : 'BUSTED!'}
+                                </div>
+                                <div className="text-lg text-gray-300 mt-2">
+                                    Final Score: <span className="font-bold text-amber-400">{game.score}</span>
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                    Total Digs: {game.digs}
+                                </div>
+                            </div>
+
+                            {/* Play again button */}
+                            <button
+                                onClick={resetGame}
+                                className="w-full py-4 text-xl font-bold rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 transition-all transform hover:scale-105 shadow-lg"
+                            >
+                                🔄 Play Again
+                            </button>
+                        </div>
+                    )}
                 </div>
-            )}
+
+                {/* Attempt counter */}
+                <div className="text-center mt-4 text-gray-500 text-sm">
+                    Attempt #{attempts + 1}
+                </div>
+            </main>
         </div>
     );
 }
