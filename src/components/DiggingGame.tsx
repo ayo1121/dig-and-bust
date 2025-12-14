@@ -11,6 +11,7 @@ import {
     DigResult
 } from '@/lib/gameConfig';
 import MineShaft from './MineShaft';
+import AnimatedMeme from './AnimatedMeme';
 import Confetti from './Confetti';
 
 interface GameState {
@@ -199,8 +200,8 @@ export default function DiggingGame() {
             {/* Progress message */}
             <div className="text-center mb-6">
                 <div className={`text-xl font-bold transition-colors ${progress >= 75 ? 'text-diamond animate-pulse' :
-                        progress >= 50 ? 'text-amber-400' :
-                            'text-white'
+                    progress >= 50 ? 'text-amber-400' :
+                        'text-white'
                     }`}>
                     {message}
                 </div>
@@ -211,11 +212,11 @@ export default function DiggingGame() {
                 )}
             </div>
 
-            {/* Mine shaft */}
-            <MineShaft
-                progress={progress}
-                lastResult={game.lastResult}
+            {/* Animated Meme */}
+            <AnimatedMeme
                 isDigging={game.isDigging}
+                progress={progress}
+                showGaveUp={game.outcome === 'bust'}
             />
 
             {/* Game controls */}
@@ -239,8 +240,8 @@ export default function DiggingGame() {
                     <div className="space-y-4">
                         {/* Result display */}
                         <div className={`text-center p-6 rounded-xl ${game.outcome === 'jackpot'
-                                ? 'bg-gradient-to-r from-diamond-dark to-diamond text-white'
-                                : 'bg-gradient-to-r from-red-800 to-red-900'
+                            ? 'bg-gradient-to-r from-diamond-dark to-diamond text-white'
+                            : 'bg-gradient-to-r from-red-800 to-red-900'
                             }`}>
                             {game.outcome === 'jackpot' ? (
                                 <>
