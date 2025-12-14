@@ -11,7 +11,7 @@ import {
     DigResult
 } from '@/lib/gameConfig';
 import MineShaft from './MineShaft';
-import AnimatedMeme from './AnimatedMeme';
+import MemeDigger from './MemeDigger';
 import Confetti from './Confetti';
 
 interface GameState {
@@ -212,11 +212,11 @@ export default function DiggingGame() {
                 )}
             </div>
 
-            {/* Animated Meme */}
-            <AnimatedMeme
+            {/* Actual Meme Image with Animation */}
+            <MemeDigger
                 isDigging={game.isDigging}
                 progress={progress}
-                showGaveUp={game.outcome === 'bust'}
+                showBust={game.outcome === 'bust'}
             />
 
             {/* Game controls */}
