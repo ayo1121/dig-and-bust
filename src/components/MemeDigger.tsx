@@ -24,19 +24,28 @@ export default function MemeDigger({ isDigging, progress, showBust }: MemeDigger
         <div className="w-full max-w-lg mx-auto">
             <div className="card overflow-hidden">
 
-                {/* Top panel - active mining */}
+                {/* TOP HALF ONLY - active mining (clip the bottom half out) */}
                 {!showBust && (
                     <div
-                        className={`relative ${shaking ? 'animate-meme-shake' : ''}`}
-                        style={{ height: '280px' }}
+                        className={`relative overflow-hidden ${shaking ? 'animate-meme-shake' : ''}`}
+                        style={{ height: '240px' }}
                     >
-                        <Image
-                            src="/meme.png"
-                            alt="Keep digging meme"
-                            fill
-                            className="object-cover object-top"
-                            priority
-                        />
+                        {/* Container that holds the full image, but we only show top half */}
+                        <div
+                            className="absolute w-full"
+                            style={{
+                                height: '480px', // Double the container height (full image)
+                                top: '0'          // Show from top
+                            }}
+                        >
+                            <Image
+                                src="/meme.png"
+                                alt="Keep digging meme"
+                                fill
+                                className="object-contain object-top"
+                                priority
+                            />
+                        </div>
 
                         {/* Progress badge */}
                         <div className="absolute bottom-3 right-3 bg-dark-800/90 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium border border-dark-600/50">
@@ -59,16 +68,28 @@ export default function MemeDigger({ isDigging, progress, showBust }: MemeDigger
                     </div>
                 )}
 
-                {/* Bottom panel - gave up */}
+                {/* BOTTOM HALF ONLY - gave up (clip the top half out) */}
                 {showBust && (
-                    <div className="relative" style={{ height: '280px' }}>
-                        <Image
-                            src="/meme.png"
-                            alt="Gave up meme"
-                            fill
-                            className="object-cover object-bottom"
-                            priority
-                        />
+                    <div
+                        className="relative overflow-hidden"
+                        style={{ height: '240px' }}
+                    >
+                        {/* Container positioned to show bottom half */}
+                        <div
+                            className="absolute w-full"
+                            style={{
+                                height: '480px',
+                                top: '-240px'  // Shift up to show bottom half
+                            }}
+                        >
+                            <Image
+                                src="/meme.png"
+                                alt="Gave up meme"
+                                fill
+                                className="object-contain object-top"
+                                priority
+                            />
+                        </div>
 
                         {/* Overlay */}
                         <div className="absolute inset-0 bg-gradient-to-t from-dark-900/90 via-dark-900/50 to-transparent flex flex-col items-center justify-end pb-6">
