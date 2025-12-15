@@ -6,23 +6,23 @@ import { AuthProvider } from "@/components/AuthProvider";
 const outfit = Outfit({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "Dig & Bust - Keep Digging! 💎",
-    description: "A simple mining game. Dig through the dirt to reach the Diamond Wall, but don't bust!",
-    keywords: ["game", "mining", "diamonds", "web game", "crypto", "solana"],
+    title: "Miner: Never Give Up! 💎⛏️",
+    description: "The classic 'never give up' meme turned into a game. Keep digging to reach the Diamond Wall!",
+    keywords: ["game", "mining", "diamonds", "web game", "never give up", "meme game"],
     icons: {
         icon: "/icon.png",
         apple: "/apple-icon.png",
     },
     openGraph: {
-        title: "Dig & Bust - Keep Digging! 💎",
-        description: "Dig through the dirt to reach the Diamond Wall!",
+        title: "Miner: Never Give Up! 💎⛏️",
+        description: "The classic 'never give up' meme turned into a game!",
         type: "website",
         images: ["/meme.png"],
     },
     twitter: {
         card: "summary_large_image",
-        title: "Dig & Bust - Keep Digging! 💎",
-        description: "Dig through the dirt to reach the Diamond Wall!",
+        title: "Miner: Never Give Up! 💎⛏️",
+        description: "The classic 'never give up' meme turned into a game!",
         images: ["/meme.png"],
     },
 };

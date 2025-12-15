@@ -172,7 +172,7 @@ export default function DiggingGame() {
                 <div className="max-w-4xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <img src="/meme.png" alt="Logo" className="w-10 h-10 rounded-lg object-cover" />
-                        <h1 className="text-2xl font-bold text-gradient-gold">Dig & Bust</h1>
+                        <h1 className="text-2xl font-bold text-gradient-gold">Miner: Never Give Up</h1>
                     </div>
                     <div className="text-sm text-earth-light">
                         Playing as <span className="text-gold font-semibold">{user?.displayName || 'Guest'}</span>
@@ -201,7 +201,7 @@ export default function DiggingGame() {
                 {game.isPlaying && (
                     <div className="text-center mb-4">
                         <div className={`text-lg font-semibold ${progress >= 75 ? 'text-diamond animate-pulse' :
-                                progress >= 50 ? 'text-gold' : 'text-earth-light'
+                            progress >= 50 ? 'text-gold' : 'text-earth-light'
                             }`}>
                             {message}
                         </div>
@@ -227,8 +227,8 @@ export default function DiggingGame() {
                             onClick={handleDig}
                             disabled={game.isDigging}
                             className={`w-full py-4 text-xl font-bold rounded-xl transition-all transform ${game.isDigging
-                                    ? 'bg-earth-dark text-earth-light cursor-not-allowed scale-95'
-                                    : 'bg-gradient-to-r from-gold to-gold-dark text-tunnel-bg hover:scale-105 active:scale-95 glow-gold'
+                                ? 'bg-earth-dark text-earth-light cursor-not-allowed scale-95'
+                                : 'bg-gradient-to-r from-gold to-gold-dark text-tunnel-bg hover:scale-105 active:scale-95 glow-gold'
                                 }`}
                         >
                             {game.isDigging ? '⛏️ Digging...' : '⛏️ DIG'}
@@ -237,8 +237,8 @@ export default function DiggingGame() {
                         <div className="space-y-4">
                             {/* Result display */}
                             <div className={`text-center p-6 rounded-xl glass ${game.outcome === 'jackpot'
-                                    ? 'border-2 border-diamond glow-diamond'
-                                    : 'border-2 border-danger glow-danger'
+                                ? 'border-2 border-diamond glow-diamond'
+                                : 'border-2 border-danger glow-danger'
                                 }`}>
                                 <div className="text-5xl mb-3">
                                     {game.outcome === 'jackpot' ? '🎉💎🎉' : '💥'}
