@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 interface MemeDiggerProps {
@@ -24,28 +23,21 @@ export default function MemeDigger({ isDigging, progress, showBust }: MemeDigger
         <div className="w-full max-w-lg mx-auto">
             <div className="card overflow-hidden">
 
-                {/* TOP HALF ONLY - active mining (clip the bottom half out) */}
+                {/* TOP PANEL ONLY - active mining */}
                 {!showBust && (
                     <div
                         className={`relative overflow-hidden ${shaking ? 'animate-meme-shake' : ''}`}
-                        style={{ height: '240px' }}
+                        style={{ height: '200px' }}
                     >
-                        {/* Container that holds the full image, but we only show top half */}
+                        {/* Use background-image for precise cropping */}
                         <div
-                            className="absolute w-full"
+                            className="absolute inset-0 bg-no-repeat bg-cover"
                             style={{
-                                height: '480px', // Double the container height (full image)
-                                top: '0'          // Show from top
+                                backgroundImage: 'url(/meme.png)',
+                                backgroundPosition: 'top center',
+                                backgroundSize: '100% 200%', // Show only top half
                             }}
-                        >
-                            <Image
-                                src="/meme.png"
-                                alt="Keep digging meme"
-                                fill
-                                className="object-contain object-top"
-                                priority
-                            />
-                        </div>
+                        />
 
                         {/* Progress badge */}
                         <div className="absolute bottom-3 right-3 bg-dark-800/90 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium border border-dark-600/50">
@@ -68,34 +60,27 @@ export default function MemeDigger({ isDigging, progress, showBust }: MemeDigger
                     </div>
                 )}
 
-                {/* BOTTOM HALF ONLY - gave up (clip the top half out) */}
+                {/* BOTTOM PANEL ONLY - gave up */}
                 {showBust && (
                     <div
                         className="relative overflow-hidden"
-                        style={{ height: '240px' }}
+                        style={{ height: '200px' }}
                     >
-                        {/* Container positioned to show bottom half */}
+                        {/* Use background-image for precise cropping */}
                         <div
-                            className="absolute w-full"
+                            className="absolute inset-0 bg-no-repeat bg-cover"
                             style={{
-                                height: '480px',
-                                top: '-240px'  // Shift up to show bottom half
+                                backgroundImage: 'url(/meme.png)',
+                                backgroundPosition: 'bottom center',
+                                backgroundSize: '100% 200%', // Show only bottom half
                             }}
-                        >
-                            <Image
-                                src="/meme.png"
-                                alt="Gave up meme"
-                                fill
-                                className="object-contain object-top"
-                                priority
-                            />
-                        </div>
+                        />
 
                         {/* Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-dark-900/90 via-dark-900/50 to-transparent flex flex-col items-center justify-end pb-6">
-                            <p className="text-3xl mb-2">😢</p>
-                            <p className="text-xl font-bold text-white">You gave up!</p>
-                            <p className="text-sm text-dark-300 mt-1">So close to the diamonds...</p>
+                        <div className="absolute inset-0 bg-gradient-to-t from-dark-900/90 via-dark-900/40 to-transparent flex flex-col items-center justify-end pb-5">
+                            <p className="text-2xl mb-1">😢</p>
+                            <p className="text-lg font-bold text-white">You gave up!</p>
+                            <p className="text-xs text-dark-300 mt-1">So close to the diamonds...</p>
                         </div>
 
                         {/* Warning badge */}
@@ -107,7 +92,7 @@ export default function MemeDigger({ isDigging, progress, showBust }: MemeDigger
             </div>
 
             {/* Motivation */}
-            <p className={`text-center mt-4 text-sm font-medium ${showBust ? 'text-dark-400' :
+            <p className={`text-center mt-3 text-sm font-medium ${showBust ? 'text-dark-400' :
                     progress >= 75 ? 'text-secondary-400' :
                         progress >= 50 ? 'text-primary-400' :
                             'text-dark-400'
