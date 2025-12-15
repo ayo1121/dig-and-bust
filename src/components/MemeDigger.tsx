@@ -20,8 +20,6 @@ export default function MemeDigger({ isDigging, progress, showBust }: MemeDigger
         }
     }, [isDigging, progress]);
 
-    const cropAmount = progress * 0.3;
-
     return (
         <div className="w-full max-w-lg mx-auto">
             <div className="card overflow-hidden">
@@ -29,27 +27,16 @@ export default function MemeDigger({ isDigging, progress, showBust }: MemeDigger
                 {/* Top panel - active mining */}
                 {!showBust && (
                     <div
-                        className={`relative overflow-hidden ${shaking ? 'animate-meme-shake' : ''}`}
-                        style={{ height: '240px' }}
+                        className={`relative ${shaking ? 'animate-meme-shake' : ''}`}
+                        style={{ height: '280px' }}
                     >
-                        <div
-                            className="absolute transition-all duration-500 ease-out"
-                            style={{
-                                top: '0',
-                                left: `-${cropAmount}%`,
-                                width: `${100 + cropAmount}%`,
-                            }}
-                        >
-                            <Image
-                                src="/meme.png"
-                                alt="Keep digging meme"
-                                width={600}
-                                height={520}
-                                className="w-full h-auto"
-                                style={{ objectFit: 'cover', objectPosition: 'top', maxHeight: '240px' }}
-                                priority
-                            />
-                        </div>
+                        <Image
+                            src="/meme.png"
+                            alt="Keep digging meme"
+                            fill
+                            className="object-cover object-top"
+                            priority
+                        />
 
                         {/* Progress badge */}
                         <div className="absolute bottom-3 right-3 bg-dark-800/90 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium border border-dark-600/50">
@@ -74,23 +61,14 @@ export default function MemeDigger({ isDigging, progress, showBust }: MemeDigger
 
                 {/* Bottom panel - gave up */}
                 {showBust && (
-                    <div className="relative" style={{ height: '260px' }}>
-                        <div className="absolute overflow-hidden" style={{
-                            bottom: '0',
-                            left: '0',
-                            right: '0',
-                            height: '260px'
-                        }}>
-                            <Image
-                                src="/meme.png"
-                                alt="Gave up meme"
-                                width={600}
-                                height={520}
-                                className="w-full"
-                                style={{ objectFit: 'cover', objectPosition: 'bottom', marginTop: '-260px' }}
-                                priority
-                            />
-                        </div>
+                    <div className="relative" style={{ height: '280px' }}>
+                        <Image
+                            src="/meme.png"
+                            alt="Gave up meme"
+                            fill
+                            className="object-cover object-bottom"
+                            priority
+                        />
 
                         {/* Overlay */}
                         <div className="absolute inset-0 bg-gradient-to-t from-dark-900/90 via-dark-900/50 to-transparent flex flex-col items-center justify-end pb-6">
