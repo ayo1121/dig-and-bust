@@ -9,80 +9,80 @@ const config: Config = {
     theme: {
         extend: {
             colors: {
-                // Warm earth tones from the meme
-                earth: {
-                    cream: "#f5e6d3",
-                    light: "#d4a574",
-                    DEFAULT: "#8B6914",
-                    brown: "#6d5a3a",
-                    dark: "#4a3a1a",
-                    darker: "#2d1810",
+                // Clean, minimal palette
+                primary: {
+                    50: "#fef7ee",
+                    100: "#fdedd3",
+                    200: "#f9d8a6",
+                    300: "#f5bc6e",
+                    400: "#f09635",
+                    500: "#ec7a12",  // Main orange
+                    600: "#dd5f09",
+                    700: "#b7460a",
+                    800: "#923810",
+                    900: "#763010",
                 },
-                dirt: {
-                    light: "#a67c52",
-                    DEFAULT: "#8B6914",
-                    dark: "#5c4a1f",
-                    darker: "#3d2e0f",
+                secondary: {
+                    50: "#ecfeff",
+                    100: "#cffafe",
+                    200: "#a5f3fc",
+                    300: "#67e8f9",
+                    400: "#22d3ee",
+                    500: "#06b6d4",  // Main cyan
+                    600: "#0891b2",
+                    700: "#0e7490",
+                    800: "#155e75",
+                    900: "#164e63",
                 },
-                // Vibrant diamond blue
-                diamond: {
-                    light: "#b0e0e6",
-                    DEFAULT: "#4fc3f7",
-                    dark: "#0288d1",
-                    glow: "#81d4fa",
+                dark: {
+                    50: "#f8fafc",
+                    100: "#f1f5f9",
+                    200: "#e2e8f0",
+                    300: "#cbd5e1",
+                    400: "#94a3b8",
+                    500: "#64748b",
+                    600: "#475569",
+                    700: "#334155",
+                    800: "#1e293b",
+                    900: "#0f172a",  // Main dark
+                    950: "#020617",
                 },
-                // Dark tunnel background
-                tunnel: {
-                    bg: "#1a0f08",
-                    wall: "#0d0604",
-                    surface: "#2d1810",
-                },
-                // Accent colors
-                gold: {
-                    light: "#ffd54f",
-                    DEFAULT: "#ffb300",
-                    dark: "#ff8f00",
-                },
-                danger: {
-                    light: "#ef5350",
-                    DEFAULT: "#d32f2f",
-                    dark: "#b71c1c",
-                },
-                success: {
-                    light: "#66bb6a",
-                    DEFAULT: "#43a047",
-                    dark: "#2e7d32",
-                },
+                success: "#10b981",
+                danger: "#ef4444",
+                warning: "#f59e0b",
+            },
+            fontFamily: {
+                sans: ["Outfit", "system-ui", "sans-serif"],
             },
             animation: {
-                "dig-shake": "dig-shake 0.3s ease-in-out",
-                "gem-pop": "gem-pop 0.5s ease-out",
-                "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+                "shake": "shake 0.3s ease-in-out",
+                "pop": "pop 0.3s ease-out",
                 "float": "float 3s ease-in-out infinite",
+                "glow": "glow 2s ease-in-out infinite",
             },
             keyframes: {
-                "dig-shake": {
+                shake: {
                     "0%, 100%": { transform: "translateX(0)" },
-                    "25%": { transform: "translateX(-5px)" },
-                    "75%": { transform: "translateX(5px)" },
+                    "25%": { transform: "translateX(-4px)" },
+                    "75%": { transform: "translateX(4px)" },
                 },
-                "gem-pop": {
-                    "0%": { transform: "scale(0) rotate(0deg)", opacity: "0" },
-                    "50%": { transform: "scale(1.2) rotate(180deg)", opacity: "1" },
-                    "100%": { transform: "scale(1) rotate(360deg)", opacity: "1" },
+                pop: {
+                    "0%": { transform: "scale(0.8)", opacity: "0" },
+                    "50%": { transform: "scale(1.1)" },
+                    "100%": { transform: "scale(1)", opacity: "1" },
                 },
-                "pulse-glow": {
-                    "0%, 100%": { boxShadow: "0 0 20px rgba(79, 195, 247, 0.3)" },
-                    "50%": { boxShadow: "0 0 40px rgba(79, 195, 247, 0.6)" },
-                },
-                "float": {
+                float: {
                     "0%, 100%": { transform: "translateY(0)" },
-                    "50%": { transform: "translateY(-10px)" },
+                    "50%": { transform: "translateY(-8px)" },
+                },
+                glow: {
+                    "0%, 100%": { opacity: "0.5" },
+                    "50%": { opacity: "1" },
                 },
             },
-            backgroundImage: {
-                "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-                "gradient-earth": "linear-gradient(135deg, #2d1810 0%, #1a0f08 50%, #0d0604 100%)",
+            boxShadow: {
+                "glow-primary": "0 0 20px rgba(236, 122, 18, 0.3)",
+                "glow-secondary": "0 0 20px rgba(6, 182, 212, 0.3)",
             },
         },
     },
